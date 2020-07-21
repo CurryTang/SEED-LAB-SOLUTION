@@ -113,3 +113,54 @@ if __name__=="__main__":
     #start sniffing
 ```
 
+### Task 2
+Important Notes: You must use protocol number 0x1 instead of protocol name `icmp`
+``` C
+#include <pcap.h>
+#include <stdio.h>
+
+void got_packet(u_char *args, const struct pcap_pkthdr *header,
+        const u_char *packet)
+{
+   printf("Got a packet\n");
+}
+
+int main()
+{
+  pcap_t *handle;
+  char errbuf[PCAP_ERRBUF_SIZE];
+  struct bpf_program fp;
+  const char filter_exp[] = "ip proto 0x1";
+  bpf_u_int32 net;
+  pcap_if_t *device_list;
+
+  // Step 0: find existing device
+  int result = pcap_findalldevs(&device_list, errbuf);
+  if (result) {
+    fprintf(stderr, "Error find devs\n");
+  }
+  printf("%s\n", device_list->name);
+  // Step 1: Open live pcap session on NIC with name enp0s3
+  handle = pcap_open_live(device_list->name, BUFSIZ, 0, 1000, errbuf); 
+  if(!handle) {
+    printf("%s\n", errbuf);
+    return -1;
+  }
+  // Step 2: Compile filter_exp into BPF psuedo-code
+  int err_result = pcap_compile(handle, &fp, filter_exp, 0, net);
+  if(err_result == PCAP_ERROR) {
+    pcap_perror(handle, "error:");
+    return -1;
+  }
+  pcap_setfilter(handle, &fp);                                
+
+  // // Step 3: Capture packets
+  pcap_loop(handle, -1, got_packet, NULL);                    
+
+  pcap_close(handle);   //Close the handle
+  return 0;
+}
+
+
+```
+
