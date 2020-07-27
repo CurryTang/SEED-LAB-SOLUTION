@@ -163,4 +163,10 @@ int main()
 
 
 ```
+* System call path Using `strace` will get the detailed path of system call. Rough idea will be 
+	* read and open system libraries
+	* socket
+	* memory stuff
+	* poll
+
 
