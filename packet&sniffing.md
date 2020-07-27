@@ -168,5 +168,6 @@ int main()
 	* socket
 	* memory stuff
 	* poll
-
+* pcap_compile will fail without enough priviledge 
+* 
 
