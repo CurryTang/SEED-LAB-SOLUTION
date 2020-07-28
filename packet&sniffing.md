@@ -169,5 +169,7 @@ int main()
 	* memory stuff
 	* poll
 * pcap_compile will fail without enough priviledge 
-* 
+* In general case, non-promiscuous mode won't accept packets sent to other devices with a different MAC address. In promiscuous mode, the net card will intercept all packets.
+
+
 
